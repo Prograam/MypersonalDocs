@@ -1,0 +1,1015 @@
+<html>
+  <head>
+    <script src="js/jquery.min.js" type="text/javascript"></script>
+    <script>
+      var backID = 0;
+      var nextID = 1;
+      var currentID = 0;
+      var questionArray = new Array();
+      var sectionSummary = new Array();
+      var answerArray = new Array();
+      var resultArray = new Array();
+      var title;
+      var questionCount = -1;
+      var answerCount = 0;
+      var loaded = false;
+      var currentSection = 1;
+      var currentQuestion = 0;
+      var secQuesMap = new Array();
+      var candQuesMap = new Array();
+      var languages = new Array();
+      var firstSection = 1;
+      var ansGiven = 0;
+      var secCount = 0;
+      var currentLang = getCookie();
+      var langArray;
+
+      var unanswered = 0;
+      loaded = true;
+      var sectionLoaded = new Array();
+
+      function showResult() {
+        window.parent.c.wantSubmitClose();
+        window.parent.c.document.getElementById("Passage").style.display =
+          "none";
+        window.parent.c.document.getElementById("Sections").style.display =
+          "none";
+        window.parent.c.document.getElementById(
+          "QuestionHeader"
+        ).style.display = "none";
+        window.parent.c.document.getElementById("Question").style.display =
+          "none";
+        window.parent.c.document.getElementById(
+          "QuestionFooter"
+        ).style.display = "none";
+        window.parent.c.document.getElementById(
+          "instructionBlock"
+        ).style.display = "none";
+        window.parent.c.document.getElementById("rightPanel").style.display =
+          "none";
+        Result_print();
+        window.parent.c.document.getElementById("result").style.display =
+          "block";
+      }
+
+      function showProfile() {
+        window.parent.c.document.getElementById("Passage").style.display =
+          "none";
+        window.parent.c.document.getElementById("Sections").style.display =
+          "none";
+        window.parent.c.document.getElementById(
+          "QuestionHeader"
+        ).style.display = "none";
+        window.parent.c.document.getElementById("Question").style.display =
+          "none";
+        window.parent.c.document.getElementById(
+          "QuestionFooter"
+        ).style.display = "none";
+        window.parent.c.document.getElementById(
+          "instructionBlock"
+        ).style.display = "none";
+        window.parent.c.document.getElementById("userInfo").style.display =
+          "block";
+      }
+
+      function hideProfile() {
+        window.parent.c.document.getElementById("Sections").style.display =
+          "block";
+        window.parent.c.document.getElementById(
+          "QuestionHeader"
+        ).style.display = "block";
+        window.parent.c.document.getElementById("Question").style.display =
+          "block";
+        window.parent.c.document.getElementById(
+          "QuestionFooter"
+        ).style.display = "block";
+        window.parent.c.document.getElementById("userInfo").style.display =
+          "none";
+      }
+
+      function showInstructions() {
+        window.parent.c.document.getElementById("Passage").style.display =
+          "none";
+        window.parent.c.document.getElementById("Sections").style.display =
+          "none";
+        window.parent.c.document.getElementById(
+          "QuestionHeader"
+        ).style.display = "none";
+        window.parent.c.document.getElementById("Question").style.display =
+          "none";
+        window.parent.c.document.getElementById(
+          "QuestionFooter"
+        ).style.display = "none";
+        window.parent.c.document.getElementById("userInfo").style.display =
+          "none";
+        window.parent.c.document.getElementById(
+          "instructionBlock"
+        ).style.display = "block";
+      }
+      function hideInstructions() {
+        window.parent.c.document.getElementById("Sections").style.display =
+          "block";
+        window.parent.c.document.getElementById(
+          "QuestionHeader"
+        ).style.display = "block";
+        window.parent.c.document.getElementById("Question").style.display =
+          "block";
+        window.parent.c.document.getElementById(
+          "QuestionFooter"
+        ).style.display = "block";
+        window.parent.c.document.getElementById(
+          "instructionBlock"
+        ).style.display = "none";
+      }
+
+      function setSection(i, secName, NoQ, langname, SID) {
+        if (!loaded) {
+          if (questionArray.length > 0) {
+            sectionSummary[i] = new Array();
+
+            sectionSummary[i][0] = 0;
+
+            secCount++;
+
+            sectionSummary[i][1] = 0;
+            sectionSummary[i][2] = 0;
+            sectionSummary[i][5] = 0;
+            sectionSummary[i][6] = 0; // TotalCorrect
+
+            sectionSummary[i][7] = 0; // Total Score
+            sectionSummary[i][8] = SID; // Total Score
+
+            sectionSummary[i][3] = questionCount + 1;
+            //			alert(secName);
+
+            //alert(questionCount);
+            sectionSummary[i][4] = secName;
+
+            secQuesMap[i] = questionArray;
+
+            questionArray = new Array();
+            questionCount = -1;
+          }
+        }
+        // alert(sectionSummary[2][4]);
+        //alert(secCount);
+        //alert(SID);
+      }
+      function setQuestion(
+        quesID,
+        quesText,
+        marks,
+        type,
+        Passage,
+        QID,
+        CORRECTSTATUS,
+        VIEWSTATUS,
+        ATTMPANSID
+      ) {
+        if (!loaded) {
+          questionCount++;
+          answerCount = 10;
+          questionArray[questionCount] = new Array();
+          questionArray[questionCount][0] = quesID;
+          questionArray[questionCount][1] = quesText;
+          questionArray[questionCount][2] = CORRECTSTATUS;
+          questionArray[questionCount][4] = type;
+          questionArray[questionCount][6] = ATTMPANSID;
+          questionArray[questionCount][7] = VIEWSTATUS;
+          questionArray[questionCount][8] = Passage;
+          questionArray[questionCount][9] = QID;
+        }
+      }
+      function setAnswer(ansID, ansText, isCorrect) {
+        if (!loaded) {
+          answerArray = new Array();
+          answerArray[0] = ansID;
+          answerArray[1] = ansText;
+
+          questionArray[questionCount][answerCount] = answerArray;
+          if (isCorrect == "TRUE") {
+            questionArray[questionCount][3] = ansID;
+
+            //alert(AID);
+          }
+
+          answerCount++;
+        }
+      }
+
+      function getCurrentQuestion() {
+        window.parent.c.document.getElementById("lblQuestionNo").innerHTML =
+          currentQuestion + 1;
+
+        var qArray = getQuestion(currentSection, currentQuestion);
+
+        if (qArray[currentQuestion][7] == "notAttempted") {
+          UpdateEventInDB(
+            currentQuestion,
+            qArray[currentQuestion][9],
+            qArray[currentQuestion][4],
+            "View",
+            "",
+            "",
+            sectionSummary[currentSection][8]
+          );
+          qArray[currentQuestion][7] = "notAnswered";
+          sectionSummary[currentSection][0]++;
+        }
+        //window.parent.frames[2].document.getElementById(currentSection).setAttribute("className","tooltip selected");
+        var qArray = getQuestion(currentSection, currentQuestion);
+        var selectedAnswer = qArray[currentQuestion][6];
+        var str = "";
+        str +=
+          '<span  id="lblQuestion">' +
+          qArray[currentQuestion][1] +
+          "</span><br>";
+
+        str += ' <div id="QuestionOptions">';
+        str += ' <table class="options"><tbody>';
+        for (i = 10; i < qArray[currentQuestion].length; i++) {
+          //alert(qArray[0][8][1]);
+          //alert(selectedAnswer+" "+qArray[currentQuestion][i][0]);
+          if (selectedAnswer == qArray[currentQuestion][i][0]) {
+            str +=
+              '<tr><td class="seq"></td><td><input id="ans" class="radio" name="ans" type="radio" value="' +
+              qArray[currentQuestion][i][0] +
+              '"  checked ><label ><span><span></span></span>&nbsp;' +
+              qArray[currentQuestion][i][1] +
+              "</label></td></tr>";
+          } else {
+            str +=
+              '<tr><td class="seq"></td><td><input id="ans" name="ans" class="radio" type="radio" value="' +
+              qArray[currentQuestion][i][0] +
+              '"  ><label ><span><span></span></span> ' +
+              qArray[currentQuestion][i][1] +
+              "</label></td></tr>";
+          }
+        }
+        str += "</tbody></table></div>";
+
+        if (qArray[currentQuestion][4] == 0) {
+          window.parent.c.document.getElementById("Passage").style.display =
+            "none";
+          window.parent.c.document.getElementById("Question").innerHTML = str;
+          window.parent.c.document.getElementById("Question").style.borderLeft =
+            "1px Solid #000000";
+          window.parent.c.document.getElementById(
+            "Question"
+          ).style.borderRight = "1px Solid #000000";
+        } else {
+          window.parent.c.document.getElementById("Passage").style.display =
+            "block";
+          window.parent.c.document.getElementById("Question").innerHTML = str;
+          window.parent.c.document.getElementById("Question").style.borderLeft =
+            "1px Solid #ffffff";
+          window.parent.c.document.getElementById("divPassageText").innerHTML =
+            qArray[currentQuestion][8];
+        }
+      }
+
+      function resetfun() {
+        var ele = window.parent.c.document.getElementsByName("ans");
+        for (var i = 0; i < ele.length; i++) ele[i].checked = false;
+      }
+      function getGivenAns() {
+        var ele = window.parent.c.document.getElementsByName("ans");
+        for (var i = 0; i < ele.length; i++) {
+          if (ele[i].checked == true) {
+            ansGiven = 1;
+            return ele[i].value;
+          } else {
+            ansGiven = 0;
+          }
+        }
+        if (ansGiven == 0) {
+          return -1;
+        }
+      }
+
+      function jump(QID) {
+        currentQuestion = QID;
+        getCurrentQuestion();
+      }
+      function jumpSection(SID) {
+        currentSection = SID;
+        currentQuestion = 0;
+        getCurrentQuestion();
+      }
+
+      function callme() {
+        //alert("aa");
+        getCurrentQuestion();
+        callSectionButton();
+
+        window.parent.c.closetab();
+        window.parent.c.startTime();
+        //getQuestion(1,0);
+      }
+      function Submit(action) {
+        if (action == "SUBMIT") {
+          showResult();
+
+          //alert(sectionSummary[currentSection][7]);
+        }
+        if (action == "TIMEUP") {
+          showResult();
+        }
+      }
+
+      function Exit(action) {
+        alert(getCorrectInCorrect(1, 1));
+      }
+
+      function setPara(PastStatus, PresentStatus) {
+        var qArray = getQuestion(currentSection, currentQuestion);
+        var selectedAnswer = qArray[currentQuestion][6];
+        var CorrectAnswer = qArray[currentQuestion][3];
+
+        if (PastStatus == "notAnswered" && PresentStatus == "answered") {
+          if (selectedAnswer == CorrectAnswer) {
+            qArray[currentQuestion][2] = 1;
+            UpdateEventInDB(
+              currentQuestion,
+              qArray[currentQuestion][9],
+              qArray[currentQuestion][4],
+              "Answered",
+              qArray[currentQuestion][6],
+              1,
+              sectionSummary[currentSection][8]
+            );
+          } else {
+            qArray[currentQuestion][2] = -1;
+            UpdateEventInDB(
+              currentQuestion,
+              qArray[currentQuestion][9],
+              qArray[currentQuestion][4],
+              "Answered",
+              qArray[currentQuestion][6],
+              0,
+              sectionSummary[currentSection][8]
+            );
+          }
+          sectionSummary[currentSection][0]--;
+          sectionSummary[currentSection][1]++;
+        } else if (PastStatus == "notAnswered" && PresentStatus == "marked") {
+          UpdateEventInDB(
+            currentQuestion,
+            qArray[currentQuestion][9],
+            qArray[currentQuestion][4],
+            "marked",
+            qArray[currentQuestion][6],
+            1,
+            sectionSummary[currentSection][8]
+          );
+          sectionSummary[currentSection][0]--;
+          sectionSummary[currentSection][2]++;
+        } else if (
+          PastStatus == "notAnswered" &&
+          PresentStatus == "markedAnswered"
+        ) {
+          if (selectedAnswer == CorrectAnswer) {
+            qArray[currentQuestion][2] = 1;
+            UpdateEventInDB(
+              currentQuestion,
+              qArray[currentQuestion][9],
+              qArray[currentQuestion][4],
+              "marked",
+              qArray[currentQuestion][6],
+              1,
+              sectionSummary[currentSection][8]
+            );
+            UpdateEventInDB(
+              currentQuestion,
+              qArray[currentQuestion][9],
+              qArray[currentQuestion][4],
+              "Answered",
+              qArray[currentQuestion][6],
+              1,
+              sectionSummary[currentSection][8]
+            );
+          } else {
+            qArray[currentQuestion][2] = -1;
+            UpdateEventInDB(
+              currentQuestion,
+              qArray[currentQuestion][9],
+              qArray[currentQuestion][4],
+              "Answered",
+              qArray[currentQuestion][6],
+              0,
+              sectionSummary[currentSection][8]
+            );
+          }
+          sectionSummary[currentSection][0]--;
+          sectionSummary[currentSection][5]++;
+        } else if (
+          PastStatus == "answered" &&
+          PresentStatus == "markedAnswered"
+        ) {
+          if (selectedAnswer == CorrectAnswer) {
+            qArray[currentQuestion][2] = 1;
+            UpdateEventInDB(
+              currentQuestion,
+              qArray[currentQuestion][9],
+              qArray[currentQuestion][4],
+              "UpdateAnswer",
+              qArray[currentQuestion][6],
+              1,
+              sectionSummary[currentSection][8]
+            );
+          } else {
+            qArray[currentQuestion][2] = -1;
+            UpdateEventInDB(
+              currentQuestion,
+              qArray[currentQuestion][9],
+              qArray[currentQuestion][4],
+              "UpdateAnswer",
+              qArray[currentQuestion][6],
+              0,
+              sectionSummary[currentSection][8]
+            );
+          }
+          sectionSummary[currentSection][1]--;
+          sectionSummary[currentSection][5]++;
+        } else if (
+          PastStatus == "markedAnswered" &&
+          PresentStatus == "answered"
+        ) {
+          if (selectedAnswer == CorrectAnswer) {
+            qArray[currentQuestion][2] = 1;
+            UpdateEventInDB(
+              currentQuestion,
+              qArray[currentQuestion][9],
+              qArray[currentQuestion][4],
+              "UpdateAnswer",
+              qArray[currentQuestion][6],
+              1,
+              sectionSummary[currentSection][8]
+            );
+          } else {
+            qArray[currentQuestion][2] = -1;
+            UpdateEventInDB(
+              currentQuestion,
+              qArray[currentQuestion][9],
+              qArray[currentQuestion][4],
+              "UpdateAnswer",
+              qArray[currentQuestion][6],
+              0,
+              sectionSummary[currentSection][8]
+            );
+          }
+
+          sectionSummary[currentSection][5]--;
+          sectionSummary[currentSection][1]++;
+        } else if (PastStatus == "answered" && PresentStatus == "notAnswered") {
+          UpdateEventInDB(
+            currentQuestion,
+            qArray[currentQuestion][9],
+            qArray[currentQuestion][4],
+            "Delete",
+            qArray[currentQuestion][6],
+            1,
+            sectionSummary[currentSection][8]
+          );
+          qArray[currentQuestion][2] = 0;
+          sectionSummary[currentSection][1]--;
+          sectionSummary[currentSection][0]++;
+        } else if (
+          PastStatus == "markedAnswered" &&
+          PresentStatus == "notAnswered"
+        ) {
+          UpdateEventInDB(
+            currentQuestion,
+            qArray[currentQuestion][9],
+            qArray[currentQuestion][4],
+            "Delete",
+            qArray[currentQuestion][6],
+            1,
+            sectionSummary[currentSection][8]
+          );
+          qArray[currentQuestion][2] = 0;
+
+          sectionSummary[currentSection][5]--;
+          sectionSummary[currentSection][0]++;
+        } else if (PastStatus == "answered" && PresentStatus == "answered") {
+          if (selectedAnswer == CorrectAnswer) {
+            qArray[currentQuestion][2] = 1;
+            UpdateEventInDB(
+              currentQuestion,
+              qArray[currentQuestion][9],
+              qArray[currentQuestion][4],
+              "UpdateAnswer",
+              qArray[currentQuestion][6],
+              1,
+              sectionSummary[currentSection][8]
+            );
+          } else {
+            qArray[currentQuestion][2] = -1;
+            UpdateEventInDB(
+              currentQuestion,
+              qArray[currentQuestion][9],
+              qArray[currentQuestion][4],
+              "UpdateAnswer",
+              qArray[currentQuestion][6],
+              0,
+              sectionSummary[currentSection][8]
+            );
+          }
+        }
+      }
+      function next(action) {
+        var qArray = getQuestion(currentSection, currentQuestion);
+        if (action == "SAVE") {
+          if (getGivenAns() == -1) {
+            setPara(qArray[currentQuestion][7], "notAnswered");
+            qArray[currentQuestion][7] = "notAnswered";
+            qArray[currentQuestion][6] = -1;
+
+            if (isLastQuestion()) {
+              if (isLastSection()) {
+                currentSection = 1;
+                currentQuestion = 0;
+                getCurrentQuestion();
+              } else {
+                currentSection++;
+                currentQuestion = 0;
+                getCurrentQuestion();
+              }
+            } else {
+              currentQuestion++;
+              getCurrentQuestion();
+            }
+          } else {
+            qArray[currentQuestion][6] = getGivenAns();
+            setPara(qArray[currentQuestion][7], "answered");
+            qArray[currentQuestion][7] = "answered";
+
+            if (isLastQuestion()) {
+              if (isLastSection()) {
+                currentSection = 1;
+                currentQuestion = 0;
+                getCurrentQuestion();
+              } else {
+                currentSection++;
+                currentQuestion = 0;
+                getCurrentQuestion();
+              }
+            } else {
+              currentQuestion++;
+              getCurrentQuestion();
+            }
+          }
+        } else {
+          if (getGivenAns() == -1) {
+            setPara(qArray[currentQuestion][7], "marked");
+            qArray[currentQuestion][7] = "marked";
+            qArray[currentQuestion][6] = -1;
+            if (isLastQuestion()) {
+              if (isLastSection()) {
+                currentSection = 1;
+                currentQuestion = 0;
+                getCurrentQuestion();
+              } else {
+                currentSection++;
+                currentQuestion = 0;
+                getCurrentQuestion();
+              }
+            } else {
+              currentQuestion++;
+              getCurrentQuestion();
+            }
+          } else {
+            qArray[currentQuestion][6] = getGivenAns();
+            setPara(qArray[currentQuestion][7], "markedAnswered");
+            qArray[currentQuestion][7] = "markedAnswered";
+
+            if (isLastQuestion()) {
+              if (isLastSection()) {
+                currentSection = 1;
+                currentQuestion = 0;
+                getCurrentQuestion();
+              } else {
+                currentSection++;
+                currentQuestion = 0;
+                getCurrentQuestion();
+              }
+            } else {
+              currentQuestion++;
+              getCurrentQuestion();
+            }
+          }
+        }
+      }
+
+      function UpdateEventInDB(Qno, Qid, type, action, Aid, Correct, SId) {
+        $.ajax({
+          type: "POST",
+          timeout: 30000,
+          url: "updateDB.php",
+          data: {
+            QNO: Qno,
+            QID: Qid,
+            Action: action,
+            AID: Aid,
+            SID: SId,
+            isCorrect: Correct,
+            Type: type,
+          },
+          success: function (response) {
+            if ($.trim(response) != 1) {
+              //prompt("Copy to clipboard: Ctrl+C, Enter", $.trim(response));
+              //window.parent.c.ServerErrOpen();
+            }
+          },
+          error: function (response) {
+            //prompt("Copy to clipboard: Ctrl+C, Enter", $.trim(response));
+            // alert(response);
+            window.parent.c.ServerErrOpen();
+          },
+        });
+      }
+
+      function callmeFirst() {
+        var QArray = secQuesMap[currentSection];
+        callSectionUpdate(QArray, 1, sectionSummary[currentSection][3]);
+      }
+
+      function isLastQuestion() {
+        if (sectionSummary[currentSection][3] == currentQuestion + 1) {
+          return 1;
+        } else {
+          return 0;
+        }
+      }
+
+      function isLastSection() {
+        if (secCount == currentSection) {
+          return 1;
+        } else {
+          return 0;
+        }
+      }
+
+      function getQuestion(SecId, QId) {
+        var QArray = secQuesMap[SecId];
+
+        //alert(SecId);
+        //alert(QArray.length);
+        // alert(sectionSummary[1][3]);
+        callSectionButton();
+        callQuestionPalette(QArray, 1, sectionSummary[SecId][3]);
+        //callSections();
+        return QArray;
+      }
+      function callSectionButton() {
+        var str = "";
+        var num = 1;
+        var i = 0;
+        var str = "";
+        for (i = 1; i <= parseInt(secCount); i++) {
+          var notAnswered = sectionSummary[i][0];
+          var answered = sectionSummary[i][1];
+          var marked = sectionSummary[i][2];
+          var markedAnswered = sectionSummary[i][5];
+          var noOfQuestions = sectionSummary[i][3];
+          var notAttemptedQuestions =
+            noOfQuestions - markedAnswered - notAnswered - answered - marked;
+          window.parent.c.document.getElementById("Answered").innerHTML =
+            answered;
+          window.parent.c.document.getElementById("not_answered").innerHTML =
+            notAnswered;
+          window.parent.c.document.getElementById("not_visited").innerHTML =
+            notAttemptedQuestions;
+
+          str +=
+            '<a href="#" onclick="javascript:window.parent.a.jumpSection(' +
+            i +
+            ');" ';
+          if (i == currentSection) {
+            str += 'class="SubjectButtonSelected"';
+            str += '><font color="#FFFFFF" size="2">';
+          } else {
+            str += 'class="SubjectButton"';
+            str += '><font color="#000000" size="2">';
+          }
+
+          str += sectionSummary[i][4];
+          str += '</font><span class="classic"><table width="201">';
+          str +=
+            '<tr><td width="151" height="37"   >Answered:</td><td width="38" align="center" valign="top"><span title ="Answered" id="tooltip_answered">' +
+            answered +
+            "</span></td></tr>";
+          str +=
+            '<tr><td height="37">Not Answered:</td><td align="center" valign="top" ><span title ="Not answered" id="tooltip_not_answered">' +
+            notAnswered +
+            "</span></td></tr>";
+          //str+='<tr><td height="37">Marked:</td><td align="center" valign="top" ><span title ="Marked" id="tooltip_review">'+marked+'</span></td></tr>';
+          //str+='<tr><td height="37">Answer Marked:</td><td align="center" valign="top" ><span title ="Answer Marked" id="tooltip_markedAnswered">'+markedAnswered+'</span></td></tr>';
+          str +=
+            '<tr><td>Not Visited:</td><td align="center" valign="top" ><span title ="Not Visited" id="tooltip_not_visited">' +
+            notAttemptedQuestions +
+            "</span></td></tr>";
+          str += '<tr><td></td><td align="center" valign="top" ></td></tr>';
+          str += '<tr><td></td><td align="center" valign="top" ></td></tr>';
+          str += '<tr><td></td><td align="center" valign="top" ></td></tr>';
+          str += '<tr><td></td><td align="center" valign="top" ></td></tr>';
+          str += "</table></span></a>";
+
+          //str+='<a id="btnSection42" class="SubjectButton" onclick="SectionButtonClick(42)" >'+sectionSummary[i][4]+'</a>';
+        }
+        window.parent.c.document.getElementById("divSections").innerHTML = str;
+      }
+
+      function callQuestionPalette(num, thisQues, noofque) {
+        /*if(num[thisQues][7]==null || num[thisQues][7]=="notAttempted")
+	{
+		num[thisQues][7]="notanswered";
+	}else if(num[thisQues][7]=="marked")
+	{
+		if(num[thisQues][6]==null)
+		{
+			num[thisQues][7]="notanswered";
+		}else{
+			num[thisQues][7]="answered";
+	    }
+     }*/
+        var str = "";
+        str +=
+          '<br><table style="margin-top:-2%;" width="100%" cellspacing="0" cellpadding="0" border="0" valign="top">';
+        // alert("in call me "+num);
+
+        str += "<TBODY><tr>";
+        for (i = 0; i < parseInt(noofque); i++) {
+          if (i % 5 == 0) {
+            str += "</tr>";
+            str += "<tr>";
+          }
+          j = i + 1;
+          if (num[i][7] == "answered") {
+            str +=
+              '<td ><span title ="Answered" id="tooltip_answered"  onclick="javascript:window.parent.a.jump(' +
+              i +
+              ');"> ' +
+              j +
+              "</span></td>";
+          } else if (num[i][7] == "notAnswered") {
+            str +=
+              '<td><span title ="Not Answered" id="tooltip_not_answered"  onclick="javascript:window.parent.a.jump(' +
+              i +
+              ');"> ' +
+              j +
+              "</span></td>";
+          } else if (num[i][7] == "marked") {
+            str +=
+              '<td><span title ="Marked for Review" id="tooltip_review"  onclick="javascript:window.parent.a.jump(' +
+              i +
+              ');"> ' +
+              j +
+              "</span></td>";
+          } else if (num[i][7] == "markedAnswered") {
+            str +=
+              '<td><span title ="Marked for Review" id="tooltip_markedAnswered"  onclick="javascript:window.parent.a.jump(' +
+              i +
+              ');"> ' +
+              j +
+              "</span></td>";
+          } else {
+            str +=
+              '<td><span title ="Not attempted" id="tooltip_not_visited"  onclick="javascript:window.parent.a.jump(' +
+              i +
+              ');"> ' +
+              j +
+              "</span></td>";
+          }
+        }
+        str += "</tr></TBODY>";
+        // alert(document.getElementById("mainRight").innerHTML);
+
+        window.parent.c.document.getElementById("PalleteButtons").innerHTML =
+          str;
+      }
+
+      function callSectionUpdate(num, thisQues, noofque) {
+        for (i = 0; i < parseInt(noofque); i++) {
+          if (num[i][7] == "answered") {
+            sectionSummary[currentSection][1]++;
+          } else if (num[i][7] == "notAnswered") {
+            sectionSummary[currentSection][0]++;
+          }
+        }
+      }
+
+      function getCorrectInCorrect(value1) {
+        var Score = 0;
+        var qArray = getQuestion(value1, 0);
+        for (l = 0; l < parseInt(sectionSummary[value1][3]); l++) {
+          if (qArray[l][2] == -1) {
+            Score++;
+          }
+        }
+        return Score;
+      }
+
+      function getCorrectCorrect(value1) {
+        var Score = 0;
+        var qArray = getQuestion(value1, 0);
+        for (l = 0; l < parseInt(sectionSummary[value1][3]); l++) {
+          if (qArray[l][2] == 1) {
+            Score++;
+          }
+        }
+        return Score;
+      }
+
+      function Result_print() {
+        var total = 0;
+        var Score = 0;
+        var Per = 0;
+        var str = "";
+        str =
+          '<center><font color="#000000"  size="+2">Exam Summary</font><center><br><table width="80%" border="1" align="center" cellpadding="0" cellspacing="0" bordercolor="#000000"  >';
+
+        str += "<tr>";
+        //str+='<td width="10%" height="28" align="center" bgcolor="0a7fcd" ><span class="style1">Section Name</span></td>';
+        str +=
+          '<td width="9%" align="center" bgcolor="0a7fcd" ><span class="style1">Answered</span></td>';
+        str +=
+          '<td width="11%" align="center" bgcolor="0a7fcd" ><span class="style1">Not Answered </span></td>';
+        //str+='<td width="9%" align="center" bgcolor="0a7fcd" ><span class="style1">Marked  </span></td>';
+        //	str+='<td width="14%" align="center" bgcolor="0a7fcd" ><span class="style1">Marked Answered </span></td>';
+        str +=
+          '<td width="11%" align="center" bgcolor="0a7fcd"  ><span class="style1">Not Visited </span></td>';
+        str +=
+          '<td width="13%" align="center" bgcolor="0a7fcd"  ><span class="style1">Correct Answer </span></td>';
+        str +=
+          '<td width="14%" align="center" bgcolor="0a7fcd"><span class="style1">InCorrect Answer </span></td>';
+        str +=
+          '<td width="9%" align="center" bgcolor="0a7fcd" ><span class="style1">Score</span></td>';
+        str += "</tr>";
+        for (i = 1; i <= parseInt(secCount); i++) {
+          var SecId = i;
+          var notAnswered = sectionSummary[i][0];
+          var answered = sectionSummary[i][1];
+          var marked = sectionSummary[i][2];
+          var markedAnswered = sectionSummary[i][5];
+          var noOfQuestions = sectionSummary[i][3];
+          var notAttemptedQuestions =
+            noOfQuestions - markedAnswered - notAnswered - answered - marked;
+          var CorrectAnswer = getCorrectCorrect(SecId);
+          var InCorrectAnswer = getCorrectInCorrect(SecId);
+          Score = 1 * CorrectAnswer - InCorrectAnswer * 0;
+          str += "<tr>";
+
+          //str+='<td width="10%" height="28" align="left" bgcolor="FFFFFF" align="center"><span class="style3">'+sectionSummary[SecId][4]+'</span></td>';
+
+          str +=
+            '<td width="9%" align="center" bgcolor="FFFFFF" ><span class="style3">' +
+            answered +
+            "</span></td>";
+          str +=
+            '<td width="11%" align="center" bgcolor="FFFFFF" ><span class="style3">' +
+            notAnswered +
+            "</span></td>";
+
+          //str+='<td width="9%" align="center" bgcolor="FFFFFF" ><span class="style3">'+marked+'</span></td>';
+          //	str+='<td width="14%" align="center" bgcolor="FFFFFF" ><span class="style3">'+markedAnswered +' </span></td>';
+          str +=
+            '<td width="11%" align="center" bgcolor="FFFFFF"  ><span class="style3">' +
+            notAttemptedQuestions +
+            "</span></td>";
+
+          str +=
+            '<td width="13%" align="center" bgcolor="FFFFFF"  ><span class="style3">' +
+            CorrectAnswer +
+            "</span></td>";
+
+          str +=
+            '<td width="14%" align="center" bgcolor="FFFFFF"><span class="style3">' +
+            InCorrectAnswer +
+            " </span></td>";
+          str +=
+            '<td width="9%" align="center" bgcolor="FFFFFF" ><span class="style3">' +
+            Score +
+            "</span></td>";
+          str += "</tr>";
+
+          //	total = total + parseInt(questionArray[i][2]);
+          //	scored = scored + parseInt(questionArray[i][4]);
+        }
+        //str+="<tr><td colspan='4'>&nbsp;</td><td class='tabletext' align=right><b>"+total+"</b></td><td class='tabletext' align=right><b>"+scored+"</b></td>";
+        str += "</table>";
+
+        if (Score <= 0) {
+          Per = 0;
+        } else {
+          Per = (Score / (noOfQuestions * 1)) * 100;
+        }
+
+        str +=
+          '<br><center><font color="#000000"  size="+2">Your Percentage  :</font><font color="#FF0000"  size="+2"> &nbsp;' +
+          Per.toFixed(2) +
+          " %</font></center>";
+
+        str += '<center><table width="643" border="0"><tr>';
+
+        str +=
+          ' <td width="643" height="302"><center><div id="container1" style="min-width: 400px; height: 300px; margin: 0 auto"></div></center></td>';
+
+        str += "</tr></table></center>";
+        //str+='<center><font color="#000000"  size="+2">Thank You !</font></center>';
+        str +=
+          '<br><center><a  href="../../?action=Launch"  target="_parent" style="text-decoration:none;"><input name="DONE" class="DefaultButton"  type="button"  value=" Another Section "/></a></center>';
+        //str+='<br><center><a  href="../../index.php?action=close"  target="_parent" style="text-decoration:none;"><input name="DONE" class="DefaultButton"  type="button"  value="DONE"/></a></center>';
+        str +=
+          '<center><font color="#000000"  size="+2">Thank You !</font></center>';
+
+        $.ajax({
+          type: "POST",
+          timeout: 30000,
+          url: "updateResult.php",
+          data: {
+            isCorrect: CorrectAnswer,
+            isNotCorrect: InCorrectAnswer,
+            Marks: Score,
+            Per: Per,
+          },
+
+          success: function (data) {
+            //alert(data);
+            //console.log(data); // to debug only
+          },
+          dataType: "json", // in case you're returning json
+        });
+
+        window.parent.c.document.getElementById("result").innerHTML = str;
+
+        window.parent.c.AnswerMeter(CorrectAnswer, InCorrectAnswer, answered);
+      }
+    </script>
+    <script>
+      $(document).ready(function () {
+        $.get("genrateXML.php", function (d) {
+          $(d)
+            .find("SECTION")
+            .each(function () {
+              var $SECTION = $(this);
+              var secName = $SECTION.find("secName").text();
+              var secID = $SECTION.find("secID").text();
+              var SID = $SECTION.find("SID").text();
+
+              //document.getElementById('a').innerHTML=secID;
+              $(d)
+                .find('QUESTION[SecID="' + secID + '"]')
+                .each(function () {
+                  var $QUESTION = $(this);
+                  var NAME = $QUESTION.find("NAME").text();
+                  var ID = $QUESTION.find("ID").text();
+                  var MARKS = $QUESTION.find("MARKS").text();
+                  var TYPE = $QUESTION.find("TYPE").text();
+                  var PASSAGE = $QUESTION.find("PASSAGE").text();
+                  var QID = $QUESTION.find("QID").text();
+                  var CORRECTSTATUS = $QUESTION.find("CORRECTSTATUS").text();
+                  var VIEWSTATUS = $QUESTION.find("VIEWSTATUS").text();
+                  var ATTMPANSID = $QUESTION.find("ATTMPANSID").text();
+
+                  //alert(NAME);
+                  // document.getElementById('a').innerHTML=Name;
+                  setQuestion(
+                    ID,
+                    NAME,
+                    MARKS,
+                    TYPE,
+                    PASSAGE,
+                    QID,
+                    CORRECTSTATUS,
+                    VIEWSTATUS,
+                    ATTMPANSID
+                  );
+                  $(d)
+                    .find('ANSWER[SecID="' + secID + '"][QuesID="' + ID + '"]')
+                    .each(function () {
+                      var $ANSWER = $(this);
+                      var NAME = $ANSWER.text();
+                      var CORRECT = $ANSWER.attr("CORRECT");
+                      var VALUE = $ANSWER.attr("VALUE");
+
+                      //document.getElementById('a').innerHTML=NAME;
+                      //alert(CORRECT);
+                      setAnswer(VALUE, NAME, CORRECT);
+                    });
+                });
+
+              setSection(secID, secName, "1", "1", SID);
+            });
+          callmeFirst();
+          callme();
+        });
+      });
+
+      //alert(sectionSummary[1][4]);
+    </script>
+  </head>
+  <body oncontextmenu="return false;">
+    <div id="a"></div>
+  </body>
+</html>

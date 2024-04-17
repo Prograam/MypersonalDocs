@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>test</title>
+  </head>
+  <body>
+    <div>
+      <input type="radio" value="12121" name="opt" id="ans" />A
+      <input type="radio" value="32323" name="opt" id="ans" />B
+      <input type="radio" value="43434" name="opt" id="ans" />C
+      <input type="radio" value="656565" name="opt" id="ans" />D
+    </div>
+
+    <div>
+      <button id="btnSaveAndNext" onclick="console.log('ok')">testclick</button>
+    </div>
+  </body>
+
+  <script>
+    var a = function () {};
+    a.getQuestion = function () {
+      const ques = [
+        [1, 2, 1, "12121", 1, 2, "3232", 3232],
+        [1, 2, 1, "43434", 1, 2, "3232", 3232],
+        [1, 2, 1, "32323", 1, 2, "3232", 3232],
+        [1, 2, 1, "656565", 1, 2, "3232", 3232],
+        [1, 2, 1, "12121", 1, 2, "3232", 3232],
+        [1, 2, 1, "656565", 1, 2, "3232", 3232],
+        [1, 2, 1, "43434", 1, 2, "3232", 3232],
+        [1, 2, 1, "32323", 1, 2, "3232", 3232],
+        [1, 2, 1, "656565", 1, 2, "3232", 3232],
+        [1, 2, 1, "12121", 1, 2, "3232", 3232],
+      ];
+      return ques;
+    };
+    // Object.defineProperty(window.parent, 'aa', { get: a });
+  </script>
+</html>
